@@ -18,7 +18,9 @@ const saveSettingsBtn = document.getElementById("save-settings");
 const locationSearch = document.getElementById("location-search");
 const suggestionsList = document.getElementById("location-suggestions");
 const useCurrentLocationBtn = document.getElementById("use-current-location");
-const calcMethodSelect = document.getElementById("calc-method");
+const calcMethodBtn = document.getElementById("calc-method-btn");
+const calcMethodOptions = document.getElementById("calc-method-options");
+const selectedMethod = document.getElementById("selected-method");
 const settingsLocationEl = document.getElementById("settings-location");
 const iqamaInputs = {
     Fajr: document.getElementById("fajr-iqama"),
@@ -182,7 +184,7 @@ function startCountdown() {
 // Settings and Location Search
 settingsBtn.addEventListener("click", () => {
     settingsOverlay.style.display = "flex";
-    calcMethodSelect.value = calcMethod;
+    selectedMethod.textContent = calcMethod === "MWL" ? "Muslim World League" : calcMethod;
     Object.keys(iqamaInputs).forEach(key => {
         iqamaInputs[key].value = iqamaOffsets[key];
     });
@@ -193,7 +195,6 @@ closeSettingsBtn.addEventListener("click", () => {
 });
 
 saveSettingsBtn.addEventListener("click", () => {
-    calcMethod = calcMethodSelect.value;
     localStorage.setItem("calcMethod", calcMethod);
     Object.keys(iqamaInputs).forEach(key => {
         iqamaOffsets[key] = Number(iqamaInputs[key].value) || 10;
@@ -201,6 +202,18 @@ saveSettingsBtn.addEventListener("click", () => {
     localStorage.setItem("iqamaOffsets", JSON.stringify(iqamaOffsets));
     fetchPrayerTimes();
     settingsOverlay.style.display = "none";
+});
+
+calcMethodBtn.addEventListener("click", () => {
+    calcMethodOptions.classList.toggle("hidden");
+});
+
+calcMethodOptions.querySelectorAll("li").forEach(option => {
+    option.addEventListener("click", () => {
+        calcMethod = option.dataset.value;
+        selectedMethod.textContent = option.textContent;
+        calcMethodOptions.classList.add("hidden");
+    });
 });
 
 locationSearch.addEventListener("input", debounce(async (e) => {
