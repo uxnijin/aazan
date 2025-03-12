@@ -1,5 +1,6 @@
 body {
     font-family: 'Inter', sans-serif;
+    overscroll-behavior: none; /* Prevent overscroll showing background */
 }
 
 .font-tanker {
@@ -19,6 +20,45 @@ input, button, li {
     font-family: 'Inter', sans-serif !important;
 }
 
+/* Fixed header styling */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+}
+
+/* Prevent main content scroll */
+main {
+    overflow: hidden;
+}
+
+/* Settings Overlay */
+.settings-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: white; /* Solid background */
+    z-index: 50;
+    display: none;
+    flex-direction: column;
+}
+@media (prefers-color-scheme: dark) {
+    .settings-overlay {
+        background-color: black; /* Solid dark background */
+    }
+}
+
+/* Scrollable settings content */
+.settings-content {
+    overflow-y: auto;
+    max-height: calc(100vh - 80px); /* Adjust based on header height */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: flex-start; /* Align items to the top */
+}
+
 /* Settings Button */
 .settings-button:hover {
     background-color: #938EFF;
@@ -26,23 +66,6 @@ input, button, li {
 }
 .settings-button:hover .settings-text {
     color: white;
-}
-
-/* Settings Overlay */
-.settings-overlay {
-    position: fixed;
-    inset: 0;
-    background-color: white;
-    z-index: 50;
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-}
-@media (prefers-color-scheme: dark) {
-    .settings-overlay {
-        background-color: black;
-    }
 }
 
 /* Save Button */
@@ -87,6 +110,40 @@ input, button, li {
     color: white;
 }
 
+/* Enhanced Table Styling */
+#aazan-table tr {
+    transition: all 0.3s ease;
+}
+
+#aazan-table td {
+    padding: 1rem; /* Increased padding for better spacing */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+@media (prefers-color-scheme: dark) {
+    #aazan-table td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.079);
+    }
+}
+#aazan-table td:first-child {
+    font-weight: 600; /* Bold prayer names */
+    color: #938EFF; /* Indigo color for prayer names */
+}
+@media (prefers-color-scheme: dark) {
+    #aazan-table td:first-child {
+        color: #a5b4fc; /* Lighter indigo for dark mode */
+    }
+}
+#aazan-table td:nth-child(2),
+#aazan-table td:nth-child(3) {
+    color: #1f2937; /* Dark gray for times */
+}
+@media (prefers-color-scheme: dark) {
+    #aazan-table td:nth-child(2),
+    #aazan-table td:nth-child(3) {
+        color: #e5e7eb; /* Light gray for dark mode */
+    }
+}
+
 /* Animation for Content Items */
 .content-item {
     opacity: 0;
@@ -118,5 +175,9 @@ input[type="number"] {
 @media (max-width: 767px) {
     .content-container {
         gap: 1rem;
+    }
+    #aazan-table td {
+        padding: 0.75rem; /* Reduced padding on mobile */
+        font-size: 0.9rem; /* Slightly smaller font size */
     }
 }

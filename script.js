@@ -1,4 +1,4 @@
-const prayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+const aazans = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 let prayerTimes = {};
 let coords = { latitude: null, longitude: null };
 let iqamaOffsets = JSON.parse(localStorage.getItem("iqamaOffsets")) || {
@@ -9,8 +9,8 @@ let calcMethod = localStorage.getItem("calcMethod") || "MWL";
 // DOM Elements
 const locationEl = document.getElementById("location");
 const countdownEl = document.getElementById("countdown-time");
-const nextPrayerNameEl = document.getElementById("next-prayer-name");
-const prayerTableEl = document.getElementById("prayer-table");
+const nextAazanNameEl = document.getElementById("next-aazan-name");
+const aazanTableEl = document.getElementById("aazan-table");
 const settingsBtn = document.getElementById("settings-btn");
 const settingsOverlay = document.getElementById("settings-overlay");
 const closeSettingsBtn = document.getElementById("close-settings");
@@ -32,6 +32,7 @@ const iqamaInputs = {
 const locationPopup = document.getElementById("location-popup");
 const retryLocationBtn = document.getElementById("retry-location");
 const closeLocationPopupBtn = document.getElementById("close-location-popup");
+const iqamaToggle = document.getElementById("iqama-toggle");
 
 // Get User Location
 function getLocation() {
@@ -40,14 +41,14 @@ function getLocation() {
             (position) => {
                 coords.latitude = position.coords.latitude;
                 coords.longitude = position.coords.longitude;
-                fetchPrayerTimes();
+                fetchAazanTimes();
                 reverseGeocode(coords.latitude, coords.longitude, true);
             },
             () => {
                 locationPopup.classList.remove("hidden");
                 coords.latitude = 51.5074; // Default: London
                 coords.longitude = -0.1278;
-                fetchPrayerTimes();
+                fetchAazanTimes();
                 reverseGeocode(coords.latitude, coords.longitude, false);
             }
         );
@@ -78,8 +79,8 @@ function reverseGeocode(lat, lon, isSelected = false) {
         });
 }
 
-// Fetch Prayer Times from API
-function fetchPrayerTimes() {
+// Fetch Aazan Times from API
+function fetchAazanTimes() {
     if (!coords.latitude || !coords.longitude) {
         locationEl.textContent = "Location not available. Please enable location access.";
         settingsLocationEl.textContent = "Location not available. Please enable location access.";
@@ -102,9 +103,9 @@ function fetchPrayerTimes() {
             startCountdown();
         })
         .catch(error => {
-            console.error("Error fetching prayer times:", error);
-            locationEl.textContent = `Error fetching prayer times: ${error.message}`;
-            settingsLocationEl.textContent = `Error fetching prayer times: ${error.message}`;
+            console.error("Error fetching aazan times:", error);
+            locationEl.textContent = `Error fetching aazan times: ${error.message}`;
+            settingsLocationEl.textContent = `Error fetching aazan times: ${error.message}`;
         });
 }
 
@@ -116,20 +117,20 @@ function getMethodCode(method) {
     return methods[method] || 3;
 }
 
-// Update UI with Prayer Times (12-hour format)
+// Update UI with Aazan Times
 function updateUI() {
-    prayerTableEl.innerHTML = "";
-    prayers.forEach(prayer => {
-        const time = prayerTimes[prayer];
-        const iqamaTime = addMinutes(time, iqamaOffsets[prayer]);
+    aazanTableEl.innerHTML = "";
+    aazans.forEach(aazan => {
+        const time = prayerTimes[aazan];
+        const iqamaTime = addMinutes(time, iqamaOffsets[aazan]);
         const row = `
             <tr class="border-b border-black border-opacity-10 dark:border-white dark:border-opacity-20">
-                <td class="py-2 text-black dark:text-white text-base font-inter">${prayer}</td>
+                <td class="py-2 text-black dark:text-white text-base font-inter">${aazan}</td>
                 <td class="py-2 text-black dark:text-white text-base font-inter">${formatTime12Hour(time)}</td>
                 <td class="py-2 text-black dark:text-white text-base font-inter">${formatTime12Hour(iqamaTime)}</td>
             </tr>
         `;
-        prayerTableEl.innerHTML += row;
+        aazanTableEl.innerHTML += row;
     });
 }
 
@@ -149,36 +150,73 @@ function formatTime12Hour(time) {
     return `${String(adjustedHours).padStart(2, "0")}:${String(mins).padStart(2, "0")} ${period}`;
 }
 
-// Countdown to Next Prayer
+// Countdown to Next Aazan or Iqama
 function startCountdown() {
     setInterval(() => {
         const now = new Date();
-        let nextPrayer = null;
+        let nextEvent = null;
         let minDiff = Infinity;
+        let isIqama = false;
+        let eventTime = null;
 
-        prayers.forEach(prayer => {
-            const [hours, mins] = prayerTimes[prayer].split(":").map(Number);
-            const prayerDate = new Date(now);
-            prayerDate.setHours(hours, mins, 0, 0);
-            const diff = prayerDate - now;
+        aazans.forEach(aazan => {
+            // Aazan time
+            const [aazanHours, aazanMins] = prayerTimes[aazan].split(":").map(Number);
+            const aazanDate = new Date(now);
+            aazanDate.setHours(aazanHours, aazanMins, 0, 0);
+            let diff = aazanDate - now;
             if (diff > 0 && diff < minDiff) {
                 minDiff = diff;
-                nextPrayer = prayer;
+                nextEvent = aazan;
+                isIqama = false;
+                eventTime = prayerTimes[aazan];
+            }
+
+            // Iqama time
+            const iqamaTime = addMinutes(prayerTimes[aazan], iqamaOffsets[aazan]);
+            const [iqamaHours, iqamaMins] = iqamaTime.split(":").map(Number);
+            const iqamaDate = new Date(now);
+            iqamaDate.setHours(iqamaHours, iqamaMins, 0, 0);
+            diff = iqamaDate - now;
+            if (diff > 0 && diff < minDiff) {
+                minDiff = diff;
+                nextEvent = aazan;
+                isIqama = true;
+                eventTime = iqamaTime;
             }
         });
 
-        if (nextPrayer) {
-            nextPrayerNameEl.textContent = nextPrayer;
-            const secondsLeft = Math.floor(minDiff / 1000);
-            const hours = Math.floor(secondsLeft / 3600);
-            const mins = Math.floor((secondsLeft % 3600) / 60);
-            const secs = secondsLeft % 60;
-            countdownEl.textContent = `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+        // If no event today, show next day's Fajr
+        if (!nextEvent) {
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            fetch(`https://api.aladhan.com/v1/timings/${tomorrow.toISOString().split("T")[0]}?latitude=${coords.latitude}&longitude=${coords.longitude}&method=${getMethodCode(calcMethod)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const fajrTime = data.data.timings.Fajr;
+                    const fajrDate = new Date(tomorrow);
+                    const [hours, mins] = fajrTime.split(":").map(Number);
+                    fajrDate.setHours(hours, mins, 0, 0);
+                    minDiff = fajrDate - now;
+                    nextEvent = "Fajr";
+                    isIqama = false;
+                    eventTime = fajrTime;
+                    updateCountdown(nextEvent, minDiff, isIqama, eventTime);
+                });
         } else {
-            nextPrayerNameEl.textContent = "Tomorrow";
-            countdownEl.textContent = "--:--:--";
+            updateCountdown(nextEvent, minDiff, isIqama, eventTime);
         }
     }, 1000);
+}
+
+function updateCountdown(eventName, diff, isIqama, eventTime) {
+    const timeText = formatTime12Hour(eventTime);
+    nextAazanNameEl.textContent = `${eventName} ${isIqama ? "Iqama" : "Aazan"} (${timeText})`;
+    const secondsLeft = Math.floor(diff / 1000);
+    const hours = Math.floor(secondsLeft / 3600);
+    const mins = Math.floor((secondsLeft % 3600) / 60);
+    const secs = secondsLeft % 60;
+    countdownEl.textContent = `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 }
 
 // Settings and Location Search
@@ -200,7 +238,7 @@ saveSettingsBtn.addEventListener("click", () => {
         iqamaOffsets[key] = Number(iqamaInputs[key].value) || 10;
     });
     localStorage.setItem("iqamaOffsets", JSON.stringify(iqamaOffsets));
-    fetchPrayerTimes();
+    fetchAazanTimes();
     settingsOverlay.style.display = "none";
 });
 
@@ -237,7 +275,7 @@ locationSearch.addEventListener("input", debounce(async (e) => {
             settingsLocationEl.textContent = li.textContent.split(",")[0];
             locationEl.classList.add("font-bold", "bg-indigo-500", "text-white", "px-2", "py-1", "rounded-2xl");
             settingsLocationEl.classList.add("font-bold", "bg-indigo-500", "text-white", "px-2", "py-1", "rounded-2xl");
-            fetchPrayerTimes();
+            fetchAazanTimes();
             suggestionsList.innerHTML = "";
             locationSearch.value = "";
         });
@@ -247,6 +285,11 @@ locationSearch.addEventListener("input", debounce(async (e) => {
 useCurrentLocationBtn.addEventListener("click", () => {
     getLocation();
     settingsOverlay.style.display = "none";
+});
+
+iqamaToggle.addEventListener("click", () => {
+    const iqamaInputsDiv = document.getElementById("iqama-inputs");
+    iqamaInputsDiv.classList.toggle("hidden");
 });
 
 function debounce(func, wait) {

@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Prayer Times - A minimal app to track prayer and iqama times.">
-    <meta property="og:title" content="Prayer Times">
-    <meta property="og:description" content="Track prayer and iqama times with this minimal app.">
+    <meta name="description" content="Aazan Times - A minimal app to track aazan and iqama times.">
+    <meta property="og:title" content="Aazan Times">
+    <meta property="og:description" content="Track aazan and iqama times with this minimal app.">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Prayer Times">
+    <meta property="og:site_name" content="Aazan Times">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Prayer Times">
-    <meta name="twitter:description" content="Track prayer and iqama times with this minimal app.">
+    <meta name="twitter:title" content="Aazan Times">
+    <meta name="twitter:description" content="Track aazan and iqama times with this minimal app.">
     <meta property="og:image" content="assets/social-preview.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -32,15 +32,17 @@
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
 
-    <title>Prayer Times</title>
+    <title>Aazan Times</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'media' }</script>
     <link href="https://api.fontshare.com/v2/css?f[]=tanker@400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <!-- Heroicons CDN -->
+    <script src="https://unpkg.com/heroicons@2.0.13/dist/heroicons.min.js"></script>
 </head>
 <body class="bg-white dark:bg-black min-h-screen flex flex-col font-inter">
-    <header class="w-full px-4 md:px-9 pt-4 md:pt-9">
+    <header class="fixed top-0 left-0 right-0 z-50 px-4 md:px-9 pt-4 md:pt-9 bg-white dark:bg-black">
         <div class="flex justify-between items-center h-12">
             <div class="text-indigo-400 text-2xl font-tanker">AAZAN</div>
             <div id="settings-btn" class="settings-button transition-all w-[100px] h-12 px-3 py-2 rounded-2xl flex justify-center items-center cursor-pointer">
@@ -48,39 +50,41 @@
             </div>
         </div>
     </header>
-    <main class="flex flex-col justify-start items-center px-4 md:px-9 py-4 md:py-9 min-h-screen">
+    <main class="flex flex-col justify-start items-center px-4 md:px-9 py-4 md:py-9 pt-20 min-h-screen overflow-hidden">
         <div class="w-full max-w-[600px] flex flex-col justify-center items-center gap-8 mt-12">
             <div class="content-item w-full flex flex-col items-center gap-2">
                 <p id="location" class="text-black dark:text-white text-sm font-inter opacity-75">
                     Fetching location...
                 </p>
                 <div id="countdown" class="text-center">
-                    <p class="text-black dark:text-white text-md font-inter opacity-75">Next Prayer</p>
-                    <div class="flex items-center gap-4">
-                        <p id="next-prayer-name" class="text-indigo-400 text-4xl font-tanker"></p>
+                    <p class="text-black dark:text-white text-md font-inter opacity-75">Next Event</p>
+                    <div class="flex-col items-center gap-4">
+                        <p id="next-aazan-name" class="text-indigo-400 text-4xl font-tanker"></p>
                         <p id="countdown-time" class="text-black dark:text-white text-4xl font-tanker"></p>
                     </div>
                 </div>
             </div>
             
             <div class="content-item w-full max-w-[361px] md:max-w-[800px]">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-black border-opacity-10 dark:border-white dark:border-opacity-20">
-                            <th class="py-2 text-black dark:text-white text-base font-inter opacity-75">Prayer</th>
-                            <th class="py-2 text-black dark:text-white text-base font-inter opacity-75">Time</th>
-                            <th class="py-2 text-black dark:text-white text-base font-inter opacity-75">Iqama</th>
-                        </tr>
-                    </thead>
-                    <tbody id="prayer-table"></tbody>
-                </table>
+                <div class="rounded-xl overflow-hidden bg-gradient-to-br from-indigo-50 to-white dark:from-gray-800 dark:to-gray-900">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-indigo-500 text-white dark:bg-indigo-500">
+                                <th class="py-3 px-4 text-base font-inter font-semibold">Aazan</th>
+                                <th class="py-3 px-4 text-base font-inter font-semibold">Aazan Time</th>
+                                <th class="py-3 px-4 text-base font-inter font-semibold">Iqama</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aazan-table" class="bg-white dark:bg-black"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
 
     <!-- Settings Overlay -->
-    <div id="settings-overlay" class="settings-overlay hidden">
-        <div class="w-full px-4 md:px-9 pt-4 md:pt-9">
+    <div id="settings-overlay" class="settings-overlay hidden bg-white dark:bg-black">
+        <div class="fixed top-0 left-0 right-0 z-50 px-4 md:px-9 pt-4 md:pt-9 bg-white dark:bg-black">
             <div class="flex justify-between items-center h-12">
                 <div class="text-indigo-400 text-2xl font-tanker">SETTINGS</div>
                 <div id="close-settings" class="settings-button transition-all w-[72px] h-12 px-3 py-2 rounded-2xl flex justify-center items-center cursor-pointer">
@@ -88,8 +92,8 @@
                 </div>
             </div>
         </div>
-        <div class="w-full px-4 md:px-9 flex-grow flex justify-center items-center">
-            <div class="w-full max-w-[600px] flex flex-col justify-center items-center gap-4">
+        <div class="settings-content flex justify-center items-start w-full px-4 md:px-9 pt-20 pb-4 overflow-y-auto">
+            <div class="w-full max-w-[600px] flex flex-col items-center gap-4">
                 <div class="w-full flex flex-col gap-1">
                     <div class="flex justify-between items-center">
                         <label class="text-black dark:text-white text-base font-inter opacity-75">Location</label>
@@ -106,7 +110,9 @@
                     <div id="calc-method-dropdown" class="relative w-full">
                         <button id="calc-method-btn" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm text-black dark:text-white dark:bg-black text-base font-inter text-left flex justify-between items-center">
                             <span id="selected-method">Muslim World League</span>
-                            <span>▼</span>
+                            <svg class="w-5 h-5 text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
                         </button>
                         <ul id="calc-method-options" class="hidden absolute w-full mt-1 bg-white dark:bg-black border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm max-h-40 overflow-auto z-10">
                             <li data-value="MWL" class="px-4 py-2 text-black dark:text-white text-base font-inter hover:bg-indigo-500 hover:text-white cursor-pointer">Muslim World League</li>
@@ -125,12 +131,19 @@
                     </div>
                 </div>
                 <div class="w-full flex flex-col gap-1">
-                    <label class="text-black dark:text-white text-base font-inter opacity-75">Iqama Minutes After Prayer</label>
-                    <input id="fajr-iqama" type="number" min="0" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50" placeholder="Fajr">
-                    <input id="dhuhr-iqama" type="number" min="0" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50" placeholder="Dhuhr">
-                    <input id="asr-iqama" type="number" min="0" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50" placeholder="Asr">
-                    <input id="maghrib-iqama" type="number" min="0" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50" placeholder="Maghrib">
-                    <input id="isha-iqama" type="number" min="0" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50" placeholder="Isha">
+                    <button id="iqama-toggle" class="text-black dark:text-white text-base font-inter opacity-75 text-left flex justify-between items-center">
+                        Iqama Minutes After Aazan 
+                        <svg class="w-5 h-5 text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="iqama-inputs" class="hidden flex flex-col gap-1">
+                        <input id="fajr-iqama" type="number" min="0" placeholder="Fajr Iqama Minutes" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
+                        <input id="dhuhr-iqama" type="number" min="0" placeholder="Dhuhr Iqama Minutes" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
+                        <input id="asr-iqama" type="number" min="0" placeholder="Asr Iqama Minutes" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
+                        <input id="maghrib-iqama" type="number" min="0" placeholder="Maghrib Iqama Minutes" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
+                        <input id="isha-iqama" type="number" min="0" placeholder="Isha Iqama Minutes" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
+                    </div>
                 </div>
                 <button id="save-settings" class="save-button transition-all w-full px-3 py-2 rounded-2xl flex justify-center items-center cursor-pointer">
                     <div class="text-white text-2xl font-tanker">Save</div>
@@ -143,7 +156,7 @@
     <div id="location-popup" class="location-popup hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
         <div class="bg-white dark:bg-black border border-black border-opacity-10 dark:border-white dark:border-opacity-20 p-6 rounded-2xl w-full max-w-[361px] flex flex-col gap-4">
             <p class="text-black dark:text-white text-lg font-tanker text-center">Location Access Denied</p>
-            <p class="text-black dark:text-white text-sm font-inter opacity-75 text-center">Please enable location access or search for a location manually to view prayer times.</p>
+            <p class="text-black dark:text-white text-sm font-inter opacity-75 text-center">Please enable location access or search for a location manually to view aazan times.</p>
             <button id="retry-location" class="retry-button transition-all w-full px-3 py-2 rounded-2xl flex justify-center items-center cursor-pointer">
                 <div class="text-white text-2xl font-tanker">Retry</div>
             </button>
@@ -154,5 +167,6 @@
     </div>
 
     <script src="script.js"></script>
-</body>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91f50c66efcc070b',t:'MTc0MTgwMDkzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91f52a62cd87c000',t:'MTc0MTgwMjE1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
