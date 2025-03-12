@@ -1,0 +1,31 @@
+{
+    "name": "Prayer Times",
+    "short_name": "Aazan",
+    "description": "Track prayer and iqama times with this minimal app.",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#FFFFFF",
+    "theme_color": "#938EFF",
+    "icons": [
+        {
+            "src": "assets/favicon.ico",
+            "sizes": "64x64 32x32 24x24 16x16",
+            "type": "image/x-icon"
+        },
+        {
+            "src": "assets/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
