@@ -78,17 +78,31 @@ function reverseGeocode(lat, lon, isSelected = false) {
 
 // Fetch Prayer Times from API
 function fetchPrayerTimes() {
+    if (!coords.latitude || !coords.longitude) {
+        locationEl.textContent = "Location not available. Please enable location access.";
+        settingsLocationEl.textContent = "Location not available. Please enable location access.";
+        return;
+    }
     const date = new Date().toISOString().split("T")[0];
-    fetch(`http://api.aladhan.com/v1/timings/${date}?latitude=${coords.latitude}&longitude=${coords.longitude}&method=${getMethodCode(calcMethod)}`)
-        .then(response => response.json())
+    fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${coords.latitude}&longitude=${coords.longitude}&method=${getMethodCode(calcMethod)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
+            if (data.code && data.code !== 200) {
+                throw new Error(`API error: ${data.status}`);
+            }
             prayerTimes = data.data.timings;
             updateUI();
             startCountdown();
         })
-        .catch(() => {
-            locationEl.textContent = "Error fetching prayer times";
-            settingsLocationEl.textContent = "Error fetching prayer times";
+        .catch(error => {
+            console.error("Error fetching prayer times:", error);
+            locationEl.textContent = `Error fetching prayer times: ${error.message}`;
+            settingsLocationEl.textContent = `Error fetching prayer times: ${error.message}`;
         });
 }
 
