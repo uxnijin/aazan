@@ -34,6 +34,35 @@ const retryLocationBtn = document.getElementById("retry-location");
 const closeLocationPopupBtn = document.getElementById("close-location-popup");
 const iqamaToggle = document.getElementById("iqama-toggle");
 
+// Fetch a random Quran verse from Al Quran Cloud API
+async function fetchRandomQuote() {
+    const totalAyahs = 6236; // Total verses in Quran
+    const randomAyah = Math.floor(Math.random() * totalAyahs) + 1; // Random number 1-6236
+    const url = `http://api.alquran.cloud/v1/ayah/${randomAyah}/en.asad`; // Muhammad Asad's translation
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.code === 200) {
+            const ayahText = data.data.text;
+            const surahNumber = data.data.surah.number;
+            const ayahNumber = data.data.numberInSurah;
+            return {
+                text: ayahText,
+                source: `Quran - Surah ${surahNumber}:${ayahNumber}`
+            };
+        } else {
+            throw new Error("API error");
+        }
+    } catch (error) {
+        console.error("Error fetching quote:", error);
+        return {
+            text: "Verily, with hardship, there is relief.",
+            source: "Quran - Surah Ash-Sharh, 94:6"
+        }; // Fallback quote
+    }
+}
+
 // Get User Location
 function getLocation() {
     if (navigator.geolocation) {
@@ -80,33 +109,30 @@ function reverseGeocode(lat, lon, isSelected = false) {
 }
 
 // Fetch Aazan Times from API
-function fetchAazanTimes() {
+async function fetchAazanTimes() {
     if (!coords.latitude || !coords.longitude) {
         locationEl.textContent = "Location not available. Please enable location access.";
         settingsLocationEl.textContent = "Location not available. Please enable location access.";
         return;
     }
     const date = new Date().toISOString().split("T")[0];
-    fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${coords.latitude}&longitude=${coords.longitude}&method=${getMethodCode(calcMethod)}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.code && data.code !== 200) {
-                throw new Error(`API error: ${data.status}`);
-            }
-            prayerTimes = data.data.timings;
-            updateUI();
-            startCountdown();
-        })
-        .catch(error => {
-            console.error("Error fetching aazan times:", error);
-            locationEl.textContent = `Error fetching aazan times: ${error.message}`;
-            settingsLocationEl.textContent = `Error fetching aazan times: ${error.message}`;
-        });
+    try {
+        const response = await fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${coords.latitude}&longitude=${coords.longitude}&method=${getMethodCode(calcMethod)}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (data.code !== 200) {
+            throw new Error(`API error: ${data.status}`);
+        }
+        prayerTimes = data.data.timings;
+        await updateUI(); // Await to ensure quote fetches before UI updates
+        startCountdown();
+    } catch (error) {
+        console.error("Error fetching aazan times:", error);
+        locationEl.textContent = `Error fetching aazan times: ${error.message}`;
+        settingsLocationEl.textContent = `Error fetching aazan times: ${error.message}`;
+    }
 }
 
 function getMethodCode(method) {
@@ -117,8 +143,8 @@ function getMethodCode(method) {
     return methods[method] || 3;
 }
 
-// Update UI with Aazan Times
-function updateUI() {
+// Update UI with Aazan Times and Quote
+async function updateUI() {
     aazanTableEl.innerHTML = "";
     aazans.forEach(aazan => {
         const time = prayerTimes[aazan];
@@ -132,6 +158,11 @@ function updateUI() {
         `;
         aazanTableEl.innerHTML += row;
     });
+
+    // Fetch and display a random Quran verse
+    const quote = await fetchRandomQuote();
+    document.getElementById("quote-text").textContent = `"${quote.text}"`;
+    document.getElementById("quote-source").textContent = `- ${quote.source}`;
 }
 
 function addMinutes(time, minutes) {

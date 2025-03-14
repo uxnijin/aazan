@@ -79,6 +79,12 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Quote Section -->
+            <div class="content-item w-full max-w-[361px] md:max-w-[800px] text-center mt-12">
+                <p id="quote-text" class="text-black dark:text-white text-sm font-inter italic"></p>
+                <p id="quote-source" class="text-black dark:text-white text-xs font-inter opacity-75 mt-1"></p>
+            </div>
         </div>
     </main>
 
@@ -137,14 +143,30 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div id="iqama-inputs" class="hidden flex flex-col gap-1">
-                        <input id="fajr-iqama" type="number" min="0" placeholder="Fajr Iqama Minutes" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
-                        <input id="dhuhr-iqama" type="number" min="0" placeholder="Dhuhr Iqama Minutes" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
-                        <input id="asr-iqama" type="number" min="0" placeholder="Asr Iqama Minutes" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
-                        <input id="maghrib-iqama" type="number" min="0" placeholder="Maghrib Iqama Minutes" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
-                        <input id="isha-iqama" type="number" min="0" placeholder="Isha Iqama Minutes" class="w-full px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
+                    <div id="iqama-inputs" class="hidden flex flex-col gap-2">
+                        <div class="flex items-center gap-2">
+                            <label for="fajr-iqama" class="text-black dark:text-white text-base font-inter w-24">Fajr</label>
+                            <input id="fajr-iqama" type="number" min="0" placeholder="Minutes" class="flex-1 px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label for="dhuhr-iqama" class="text-black dark:text-white text-base font-inter w-24">Dhuhr</label>
+                            <input id="dhuhr-iqama" type="number" min="0" placeholder="Minutes" class="flex-1 px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label for="asr-iqama" class="text-black dark:text-white text-base font-inter w-24">Asr</label>
+                            <input id="asr-iqama" type="number" min="0" placeholder="Minutes" class="flex-1 px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label for="maghrib-iqama" class="text-black dark:text-white text-base font-inter w-24">Maghrib</label>
+                            <input id="maghrib-iqama" type="number" min="0" placeholder="Minutes" class="flex-1 px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label for="isha-iqama" class="text-black dark:text-white text-base font-inter w-24">Isha</label>
+                            <input id="isha-iqama" type="number" min="0" placeholder="Minutes" class="flex-1 px-4 py-3 border border-black border-opacity-10 dark:border-white dark:border-opacity-20 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white dark:bg-black text-base font-inter placeholder-black placeholder-opacity-25 dark:placeholder-white dark:placeholder-opacity-50">
+                        </div>
                     </div>
                 </div>
+                
                 <button id="save-settings" class="save-button transition-all w-full px-3 py-2 rounded-2xl flex justify-center items-center cursor-pointer">
                     <div class="text-white text-2xl font-tanker">Save</div>
                 </button>
@@ -168,5 +190,5 @@
 
     <script src="script.js"></script>
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91f50c66efcc070b',t:'MTc0MTgwMDkzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91f52a62cd87c000',t:'MTc0MTgwMjE1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91f52a62cd87c000',t:'MTc0MTgwMjE1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92015ed49c0f675a',t:'MTc0MTkzMDEzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
